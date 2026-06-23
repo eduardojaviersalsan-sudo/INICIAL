@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}Sabores de Ecuador - Comida Típica{% endblock %}
+
+{% block contenido %}
+<section class="hero">
+    <h1>Sabores de Ecuador</h1>
+    <p>Un recorrido por los platos más representativos de la Costa, Sierra y Amazonía.</p>
+</section>
+
+<section class="grid">
+    {% for plato in platos %}
+    <a class="card" href="{{ url_for('detalle_plato', nombre=plato.nombre) }}">
+        <h2>{{ plato.nombre }}</h2>
+        <span class="region">{{ plato.region }}</span>
+        <p>{{ plato.descripcion }}</p>
+    </a>
+    {% endfor %}
+</section>
+{% endblock %}

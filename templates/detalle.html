@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ plato.nombre if plato else "Plato no encontrado" }} - Sabores de Ecuador{% endblock %}
+
+{% block contenido %}
+{% if plato %}
+<section class="detalle">
+    <h1>{{ plato.nombre }}</h1>
+    <span class="region">{{ plato.region }}</span>
+    <p>{{ plato.descripcion }}</p>
+    <a class="volver" href="{{ url_for('inicio') }}">&larr; Volver al inicio</a>
+</section>
+{% else %}
+<section class="detalle">
+    <h1>Plato no encontrado</h1>
+    <a class="volver" href="{{ url_for('inicio') }}">&larr; Volver al inicio</a>
+</section>
+{% endif %}
+{% endblock %}
