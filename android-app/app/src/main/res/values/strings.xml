@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TikTok Sticker Saver</string>
+    <string name="gallery_title">Stickers guardados</string>
+
+    <string name="hint_url">Pega el enlace de un video de TikTok…</string>
+    <string name="action_go">Ir</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_forward">Adelante</string>
+    <string name="action_reload">Recargar</string>
+    <string name="action_gallery">Galería</string>
+    <string name="action_help">Ayuda</string>
+
+    <string name="detected_stickers_title">Stickers detectados (%1$d)</string>
+    <string name="action_save_all">Guardar todos</string>
+    <string name="action_dismiss">Ocultar</string>
+
+    <string name="save_sticker_title">Guardar sticker</string>
+    <string name="save_sticker_message">¿Quieres guardar esta imagen en tu galería como sticker?</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_cancel">Cancelar</string>
+
+    <string name="toast_saved">Sticker guardado en Fotos → TikTokStickers</string>
+    <string name="toast_save_error">No se pudo guardar el sticker</string>
+    <string name="toast_saving_n">Guardando %1$d stickers…</string>
+    <string name="toast_saved_n">%1$d de %2$d stickers guardados</string>
+
+    <string name="permission_needed_title">Permiso necesario</string>
+    <string name="permission_needed_message">Para guardar imágenes en tu galería, la app necesita permiso de almacenamiento.</string>
+
+    <string name="help_text">1) Pega el enlace de un video de TikTok y pulsa \"Ir\", o abre TikTok, comparte un video con esta app.\n2) Abre la sección de comentarios dentro de la página.\n3) Mantén presionado sobre cualquier sticker de un comentario para guardarlo, igual que \"guardar imagen\" en un navegador.\n4) La app también intenta detectar stickers automáticamente y los muestra en la franja inferior para guardarlos con un toque.\n\nNota: esta app no usa APIs privadas de TikTok ni tu cuenta; solo te permite guardar imágenes que TikTok ya muestra en pantalla. La detección automática es heurística y puede fallar si TikTok cambia el diseño de su sitio — en ese caso, usa siempre la opción de mantener presionado.</string>
+
+    <string name="empty_gallery">Todavía no has guardado ningún sticker.</string>
+</resources>
