@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Configuración del Servicio de Accesibilidad.
+
+    packageNames: limitamos el servicio a los paquetes conocidos de TikTok
+    para que Android solo nos notifique eventos de esa app (mejor batería y
+    privacidad: no "escuchamos" ninguna otra app). Si en tu país TikTok usa
+    otro nombre de paquete, agrégalo aquí separado por coma. Puedes
+    averiguarlo con:  adb shell pm list packages | grep -i tiktok
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_service_description"
+    android:notificationTimeout="150"
+    android:packageNames="com.zhiliaoapp.musically,com.ss.android.ugc.trill,com.zhiliaoapp.musically.go" />

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- Solo necesario en Android 9 (API 28) o inferior; en API 29+ se usa MediaStore. -->
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+    <!--
+        Esta app NO necesita permiso de Internet: todo el trabajo (captura de
+        pantalla, recorte, conversión a sticker) ocurre en el propio
+        dispositivo y se guarda en el almacenamiento privado de la app.
+        Tampoco necesita WRITE_EXTERNAL_STORAGE ni "Mostrar sobre otras apps":
+        el botón flotante se dibuja como "overlay de accesibilidad"
+        (WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY), un tipo de
+        ventana que Android reserva para servicios de accesibilidad ya
+        habilitados por el usuario, sin permisos adicionales.
+    -->
 
     <application
         android:allowBackup="true"
@@ -20,26 +24,50 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <!-- Permite abrir la app directamente desde "Compartir" en TikTok con el enlace de un video -->
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
         </activity>
 
         <activity
-            android:name=".ui.GalleryActivity"
+            android:name=".ui.StickerPackActivity"
             android:exported="false"
-            android:label="@string/gallery_title"
+            android:label="@string/pack_title"
             android:parentActivityName=".ui.MainActivity" />
+
+        <!--
+            Servicio de Accesibilidad: el "motor" de la app. Debe declarar el
+            permiso BIND_ACCESSIBILITY_SERVICE (lo exige el sistema) y estar
+            exported=true para que el sistema pueda enlazarse a él una vez
+            que el usuario lo activa manualmente en
+            Ajustes > Accesibilidad > Apps instaladas.
+        -->
+        <service
+            android:name=".accessibility.TikTokAccessibilityService"
+            android:exported="true"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!--
+            Proveedor de contenido que expone el paquete de stickers a
+            WhatsApp siguiendo el contrato oficial de "Third Party Sticker
+            Apps" (ver README). Debe estar exported=true: WhatsApp lo
+            consulta desde su propio proceso.
+        -->
+        <provider
+            android:name=".provider.StickerContentProvider"
+            android:authorities="${applicationId}.stickercontentprovider"
+            android:enabled="true"
+            android:exported="true" />
 
     </application>
 
