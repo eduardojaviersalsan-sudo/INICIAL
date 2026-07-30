@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block titulo %}{{ activo.nombre }} · Activo{% endblock %}
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h1 class="h3 mb-1">{{ activo.nombre }}</h1>
+        <span class="text-muted font-monospace">{{ activo.codigo }}</span>
+        <span class="badge ms-2 {% if activo.estado == 'Operativo' %}bg-success{% elif activo.estado == 'En mantenimiento' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+            {{ activo.estado }}
+        </span>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('editar_activo', activo_id=activo.id) }}" class="btn btn-outline-secondary btn-sm">Editar</a>
+        <form method="post" action="{{ url_for('eliminar_activo', activo_id=activo.id) }}" onsubmit="return confirm('¿Eliminar este activo y todos sus mantenimientos?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Datos del activo</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><span class="text-muted">Categoría:</span> {{ activo.categoria or "—" }}</li>
+                <li class="list-group-item"><span class="text-muted">Ubicación:</span> {{ activo.ubicacion or "—" }}</li>
+                <li class="list-group-item"><span class="text-muted">Responsable:</span> {{ activo.responsable or "—" }}</li>
+                <li class="list-group-item"><span class="text-muted">Adquisición:</span> {{ activo.fecha_adquisicion.strftime('%d/%m/%Y') if activo.fecha_adquisicion else "—" }}</li>
+                <li class="list-group-item"><span class="text-muted">Valor:</span> {{ "$%.2f"|format(activo.valor) if activo.valor is not none else "—" }}</li>
+                {% if activo.notas %}
+                <li class="list-group-item"><span class="text-muted">Notas:</span> {{ activo.notas }}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h5 mb-0">Mantenimientos recurrentes</h2>
+            <a href="{{ url_for('nuevo_mantenimiento', activo_id=activo.id) }}" class="btn btn-warning btn-sm">+ Programar mantenimiento</a>
+        </div>
+
+        {% if activo.mantenimientos %}
+            {% for m in activo.mantenimientos %}
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="badge bg-{{ m.estado_color }} mb-1">{{ m.estado }}</span>
+                            <h3 class="h6 mb-1">{{ m.tipo }}{% if m.descripcion %} · {{ m.descripcion }}{% endif %}</h3>
+                            <div class="text-muted small">
+                                Frecuencia cada {{ m.frecuencia_dias }} días ·
+                                Última vez: {{ m.ultima_fecha.strftime('%d/%m/%Y') if m.ultima_fecha else "—" }} ·
+                                Próxima: <strong>{{ m.proxima_fecha.strftime('%d/%m/%Y') }}</strong>
+                                {% if m.responsable %} · Responsable: {{ m.responsable }}{% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('editar_mantenimiento', mantenimiento_id=m.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <form method="post" action="{{ url_for('eliminar_mantenimiento', mantenimiento_id=m.id) }}" onsubmit="return confirm('¿Eliminar este mantenimiento?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{{ url_for('completar_mantenimiento', mantenimiento_id=m.id) }}" class="d-flex gap-2 mt-3 border-top pt-3">
+                        <input type="text" name="notas" class="form-control form-control-sm" placeholder="Notas (opcional)">
+                        <button type="submit" class="btn btn-success btn-sm text-nowrap">✓ Marcar realizado hoy</button>
+                    </form>
+
+                    {% if m.historial %}
+                    <details class="mt-2">
+                        <summary class="small text-muted">Historial ({{ m.historial|length }})</summary>
+                        <ul class="list-unstyled small mt-2 mb-0">
+                        {% for h in m.historial %}
+                            <li>{{ h.fecha.strftime('%d/%m/%Y') }}{% if h.notas %} — {{ h.notas }}{% endif %}</li>
+                        {% endfor %}
+                        </ul>
+                    </details>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Este activo no tiene mantenimientos programados todavía.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

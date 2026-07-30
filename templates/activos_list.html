@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block titulo %}Activos · Inventario{% endblock %}
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Activos</h1>
+    <a href="{{ url_for('nuevo_activo') }}" class="btn btn-primary">+ Nuevo activo</a>
+</div>
+
+<form class="mb-3" method="get">
+    <input type="search" name="q" value="{{ busqueda }}" class="form-control" placeholder="Buscar por nombre, código o categoría...">
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Ubicación</th>
+                    <th>Estado</th>
+                    <th>Próximo mantenimiento</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for activo in activos %}
+                <tr>
+                    <td><span class="font-monospace">{{ activo.codigo }}</span></td>
+                    <td><a href="{{ url_for('detalle_activo', activo_id=activo.id) }}">{{ activo.nombre }}</a></td>
+                    <td>{{ activo.categoria or "—" }}</td>
+                    <td>{{ activo.ubicacion or "—" }}</td>
+                    <td>
+                        <span class="badge {% if activo.estado == 'Operativo' %}bg-success{% elif activo.estado == 'En mantenimiento' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                            {{ activo.estado }}
+                        </span>
+                    </td>
+                    <td>
+                        {% set m = activo.proximo_mantenimiento %}
+                        {% if m %}
+                            <span class="badge bg-{{ m.estado_color }}">{{ m.proxima_fecha.strftime('%d/%m/%Y') }}</span>
+                        {% else %}
+                            <span class="text-muted small">sin programar</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('detalle_activo', activo_id=activo.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No se encontraron activos.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

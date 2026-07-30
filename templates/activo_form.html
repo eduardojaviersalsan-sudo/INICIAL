@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if activo else 'Nuevo' }} activo{% endblock %}
+{% block contenido %}
+
+<h1 class="h3 mb-4">{{ 'Editar activo' if activo else 'Nuevo activo' }}</h1>
+
+<form method="post" class="card shadow-sm p-4" style="max-width: 720px;">
+    <div class="row g-3">
+        <div class="col-sm-4">
+            <label class="form-label">Código de inventario *</label>
+            <input type="text" name="codigo" class="form-control" required value="{{ activo.codigo if activo else '' }}">
+        </div>
+        <div class="col-sm-8">
+            <label class="form-label">Nombre *</label>
+            <input type="text" name="nombre" class="form-control" required value="{{ activo.nombre if activo else '' }}">
+        </div>
+
+        <div class="col-sm-6">
+            <label class="form-label">Categoría</label>
+            <input type="text" name="categoria" class="form-control" list="lista-categorias" value="{{ activo.categoria if activo else '' }}">
+            <datalist id="lista-categorias">
+                <option value="Equipo de cómputo">
+                <option value="Mobiliario">
+                <option value="Maquinaria">
+                <option value="Vehículo">
+                <option value="Herramienta">
+                <option value="Electrodoméstico">
+            </datalist>
+        </div>
+        <div class="col-sm-6">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+                {% for estado in estados %}
+                    <option value="{{ estado }}" {% if activo and activo.estado == estado %}selected{% endif %}>{{ estado }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-sm-6">
+            <label class="form-label">Ubicación</label>
+            <input type="text" name="ubicacion" class="form-control" value="{{ activo.ubicacion if activo else '' }}">
+        </div>
+        <div class="col-sm-6">
+            <label class="form-label">Responsable</label>
+            <input type="text" name="responsable" class="form-control" value="{{ activo.responsable if activo else '' }}">
+        </div>
+
+        <div class="col-sm-6">
+            <label class="form-label">Fecha de adquisición</label>
+            <input type="date" name="fecha_adquisicion" class="form-control" value="{{ activo.fecha_adquisicion.isoformat() if activo and activo.fecha_adquisicion else '' }}">
+        </div>
+        <div class="col-sm-6">
+            <label class="form-label">Valor (USD)</label>
+            <input type="number" step="0.01" name="valor" class="form-control" value="{{ activo.valor if activo and activo.valor is not none else '' }}">
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Notas</label>
+            <textarea name="notas" class="form-control" rows="3">{{ activo.notas if activo else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{{ url_for('detalle_activo', activo_id=activo.id) if activo else url_for('listar_activos') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block titulo %}Panel · Inventario de Activos{% endblock %}
+{% block contenido %}
+
+<h1 class="h3 mb-4">Panel general</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Total de activos</div>
+                <div class="fs-2 fw-bold">{{ total_activos }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Activos operativos</div>
+                <div class="fs-2 fw-bold text-success">{{ activos_operativos }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Mantenimientos atrasados</div>
+                <div class="fs-2 fw-bold text-danger">{{ atrasados|length }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Próximos (7 días)</div>
+                <div class="fs-2 fw-bold text-warning">{{ proximos|length }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger-subtle fw-semibold">⚠️ Mantenimientos atrasados</div>
+            <div class="card-body p-0">
+                {% if atrasados %}
+                <table class="table table-hover mb-0 align-middle">
+                    <tbody>
+                    {% for m in atrasados %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('detalle_activo', activo_id=m.activo.id) }}">{{ m.activo.nombre }}</a>
+                                <div class="text-muted small">{{ m.tipo }} · {{ m.descripcion or "sin descripción" }}</div>
+                            </td>
+                            <td class="text-end text-danger fw-semibold">{{ m.proxima_fecha.strftime('%d/%m/%Y') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted p-3 mb-0">No hay mantenimientos atrasados. 🎉</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning-subtle fw-semibold">🗓️ Próximos mantenimientos (7 días)</div>
+            <div class="card-body p-0">
+                {% if proximos %}
+                <table class="table table-hover mb-0 align-middle">
+                    <tbody>
+                    {% for m in proximos %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('detalle_activo', activo_id=m.activo.id) }}">{{ m.activo.nombre }}</a>
+                                <div class="text-muted small">{{ m.tipo }} · {{ m.descripcion or "sin descripción" }}</div>
+                            </td>
+                            <td class="text-end text-warning-emphasis fw-semibold">{{ m.proxima_fecha.strftime('%d/%m/%Y') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted p-3 mb-0">No hay mantenimientos próximos esta semana.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

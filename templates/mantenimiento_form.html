@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if mantenimiento else 'Nuevo' }} mantenimiento{% endblock %}
+{% block contenido %}
+
+<h1 class="h3 mb-4">{{ 'Editar mantenimiento' if mantenimiento else 'Programar mantenimiento' }}</h1>
+
+<form method="post" class="card shadow-sm p-4" style="max-width: 720px;">
+    <div class="row g-3">
+        <div class="col-sm-6">
+            <label class="form-label">Activo *</label>
+            <select name="activo_id" class="form-select" required>
+                <option value="" disabled {% if not mantenimiento and not activo_id_preseleccionado %}selected{% endif %}>Selecciona un activo</option>
+                {% for a in activos %}
+                    {% set seleccionado = (mantenimiento and mantenimiento.activo_id == a.id) or (activo_id_preseleccionado == a.id) %}
+                    <option value="{{ a.id }}" {% if seleccionado %}selected{% endif %}>{{ a.codigo }} — {{ a.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <label class="form-label">Tipo *</label>
+            <select name="tipo" class="form-select" required>
+                {% for tipo in tipos %}
+                    <option value="{{ tipo }}" {% if mantenimiento and mantenimiento.tipo == tipo %}selected{% endif %}>{{ tipo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Descripción</label>
+            <input type="text" name="descripcion" class="form-control" value="{{ mantenimiento.descripcion if mantenimiento else '' }}">
+        </div>
+
+        <div class="col-sm-6">
+            <label class="form-label">Frecuencia *</label>
+            <select name="frecuencia_dias" class="form-select" required>
+                {% for dias, etiqueta in frecuencias %}
+                    <option value="{{ dias }}" {% if mantenimiento and mantenimiento.frecuencia_dias == dias %}selected{% endif %}>{{ etiqueta }} ({{ dias }} días)</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <label class="form-label">Responsable</label>
+            <input type="text" name="responsable" class="form-control" value="{{ mantenimiento.responsable if mantenimiento else '' }}">
+        </div>
+
+        <div class="col-sm-6">
+            <label class="form-label">Última fecha realizada</label>
+            <input type="date" name="ultima_fecha" class="form-control" value="{{ mantenimiento.ultima_fecha.isoformat() if mantenimiento and mantenimiento.ultima_fecha else '' }}">
+            {% if not mantenimiento %}<div class="form-text">Si se deja vacío, se usará hoy para calcular la próxima fecha.</div>{% endif %}
+        </div>
+
+        {% if mantenimiento %}
+        <div class="col-sm-6">
+            <label class="form-label">Próxima fecha *</label>
+            <input type="date" name="proxima_fecha" class="form-control" required value="{{ mantenimiento.proxima_fecha.isoformat() }}">
+        </div>
+        {% endif %}
+
+        <div class="col-12">
+            <label class="form-label">Notas</label>
+            <textarea name="notas" class="form-control" rows="3">{{ mantenimiento.notas if mantenimiento else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{{ url_for('detalle_activo', activo_id=mantenimiento.activo_id) if mantenimiento else url_for('listar_mantenimientos') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+
+{% endblock %}

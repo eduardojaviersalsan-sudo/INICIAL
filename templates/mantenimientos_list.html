@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Mantenimientos{% endblock %}
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Mantenimientos</h1>
+    <a href="{{ url_for('nuevo_mantenimiento') }}" class="btn btn-warning">+ Programar mantenimiento</a>
+</div>
+
+<div class="btn-group mb-3">
+    <a href="{{ url_for('listar_mantenimientos') }}" class="btn btn-sm btn-outline-secondary {% if not filtro %}active{% endif %}">Todos</a>
+    <a href="{{ url_for('listar_mantenimientos', estado='Atrasado') }}" class="btn btn-sm btn-outline-danger {% if filtro == 'Atrasado' %}active{% endif %}">Atrasados</a>
+    <a href="{{ url_for('listar_mantenimientos', estado='Próximo') }}" class="btn btn-sm btn-outline-warning {% if filtro == 'Próximo' %}active{% endif %}">Próximos</a>
+    <a href="{{ url_for('listar_mantenimientos', estado='Al día') }}" class="btn btn-sm btn-outline-success {% if filtro == 'Al día' %}active{% endif %}">Al día</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Activo</th>
+                    <th>Tipo</th>
+                    <th>Frecuencia</th>
+                    <th>Próxima fecha</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for m in mantenimientos %}
+                <tr>
+                    <td><a href="{{ url_for('detalle_activo', activo_id=m.activo.id) }}">{{ m.activo.nombre }}</a></td>
+                    <td>{{ m.tipo }}</td>
+                    <td>cada {{ m.frecuencia_dias }} días</td>
+                    <td>{{ m.proxima_fecha.strftime('%d/%m/%Y') }}</td>
+                    <td><span class="badge bg-{{ m.estado_color }}">{{ m.estado }}</span></td>
+                    <td class="text-end">
+                        <a href="{{ url_for('detalle_activo', activo_id=m.activo.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No hay mantenimientos que mostrar.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
