@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+.venv/
+venv/
+
+# Archivos subidos por los usuarios (no se versionan)
+static/uploads/*
+!static/uploads/.gitkeep
