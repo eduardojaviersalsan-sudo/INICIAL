@@ -1,20 +1,76 @@
 {% extends "base.html" %}
 
-{% block titulo %}Sabores de Ecuador - Comida Típica{% endblock %}
+{% block titulo %}StickerHub · Sube y comparte stickers y GIFs{% endblock %}
 
 {% block contenido %}
 <section class="hero">
-    <h1>Sabores de Ecuador</h1>
-    <p>Un recorrido por los platos más representativos de la Costa, Sierra y Amazonía.</p>
+    <h1>Sube tus stickers y GIFs 🚀</h1>
+    <p>
+        Comparte stickers de WhatsApp <strong>.webp</strong> y contenido para TikTok en
+        <strong>.gif</strong> / <strong>.png</strong>. Imágenes estáticas y animadas, todo en un solo lugar.
+    </p>
 </section>
 
-<section class="grid">
-    {% for plato in platos %}
-    <a class="card" href="{{ url_for('detalle_plato', nombre=plato.nombre) }}">
-        <h2>{{ plato.nombre }}</h2>
-        <span class="region">{{ plato.region }}</span>
-        <p>{{ plato.descripcion }}</p>
+<section class="upload-card">
+    <form action="{{ url_for('subir') }}" method="post" enctype="multipart/form-data" id="upload-form">
+        <label for="file-input" class="dropzone" id="dropzone">
+            <div class="dropzone__icon">📤</div>
+            <p class="dropzone__text">
+                Arrastra tus archivos aquí o <span class="dropzone__link">elige archivos</span>
+            </p>
+            <p class="dropzone__hint">Formatos aceptados: .webp · .gif · .png — máx. 15 MB por envío</p>
+            <input
+                type="file"
+                name="imagenes"
+                id="file-input"
+                accept=".webp,.gif,.png,image/webp,image/gif,image/png"
+                multiple
+                hidden
+            >
+        </label>
+        <div id="file-preview" class="file-preview"></div>
+        <button type="submit" class="btn-submit">Subir imágenes</button>
+    </form>
+</section>
+
+<section class="filters">
+    <a href="{{ url_for('inicio', categoria='todos') }}"
+       class="filter-tab {% if categoria_activa == 'todos' %}filter-tab--active{% endif %}">
+        Todos ({{ total }})
     </a>
+    <a href="{{ url_for('inicio', categoria='stickers') }}"
+       class="filter-tab filter-tab--stickers {% if categoria_activa == 'stickers' %}filter-tab--active{% endif %}">
+        🟢 Stickers WhatsApp
+    </a>
+    <a href="{{ url_for('inicio', categoria='tiktok') }}"
+       class="filter-tab filter-tab--tiktok {% if categoria_activa == 'tiktok' %}filter-tab--active{% endif %}">
+        🎵 GIFs &amp; PNG TikTok
+    </a>
+</section>
+
+<section class="gallery">
+    {% for img in imagenes %}
+    <figure class="gallery-item">
+        <span class="badge badge--{{ img.extension }}">.{{ img.extension }}</span>
+        <img
+            src="{{ url_for('static', filename='uploads/' ~ img.archivo) }}"
+            alt="{{ img.nombre_original }}"
+            loading="lazy"
+        >
+        <figcaption title="{{ img.nombre_original }}">{{ img.nombre_original }}</figcaption>
+    </figure>
+
+    {% if loop.index % 9 == 0 %}
+    <!-- ESPACIO PUBLICITARIO (anuncio nativo dentro de la galería) -->
+    <div class="ad-slot ad-slot--infeed" id="ad-slot-infeed-{{ loop.index }}">
+        <span>Espacio publicitario</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <p>🖼️ Todavía no hay imágenes en esta categoría.</p>
+        <p>¡Sé el primero en subir un sticker o GIF!</p>
+    </div>
     {% endfor %}
 </section>
 {% endblock %}
